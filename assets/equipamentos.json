@@ -1,0 +1,35 @@
+{
+  "tipos": [
+    "Notebook",
+    "Desktop",
+    "Tablet",
+    "Smartphone",
+    "Projetor",
+    "Caixa de som",
+    "Monitor"
+  ],
+  "marcas_por_tipo": {
+    "Notebook": [
+      "Lenovo",
+      "Vaio",
+      "Avell"
+    ],
+    "Desktop": [],
+    "Tablet": [],
+    "Smartphone": [
+      "Samsung",
+      "Apple"
+    ],
+    "Projetor": [
+      "Epson"
+    ],
+    "Caixa de som": [
+      "JBL"
+    ],
+    "Monitor": [
+      "AOC",
+      "Philips",
+      "Positivo"
+    ]
+  }
+}
