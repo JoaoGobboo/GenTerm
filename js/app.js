@@ -8,6 +8,32 @@
   const FIXED_TI_ROLE = "Responsável Departamento TI";
   const TECHNICIANS_FILE = "assets/tecnicos.json";
   const EQUIPMENT_OPTIONS_FILE = "assets/equipamentos.json";
+  const RESPONSIBILITY_COMPANIES = [
+    {
+      id: "aprende-brasil",
+      label: "Aprende Brasil",
+      termName: "Aprende Brasil",
+      cnpj: "75.104.422/0010-05"
+    },
+    {
+      id: "positivo-educacional",
+      label: "Positivo Educacional",
+      termName: "Positivo Educacional",
+      cnpj: "812.437.350.019-77"
+    },
+    {
+      id: "posigraf",
+      label: "Gráfica e Editora Posigraf",
+      termName: "GRAFICA E EDITORA POSIGRAF LTDA",
+      cnpj: "75.104.422/0010-05"
+    },
+    {
+      id: "instituto-positvo",
+      label: "Instituto Positvo",
+      termName: "Instituto Positvo",
+      cnpj: "11.820.490/0001-99"
+    }
+  ];
   const FALLBACK_TECHNICIANS = {
     tecnicos_n2: [
       {
@@ -95,6 +121,7 @@
       return;
     }
 
+    setupResponsibilityCompanySelect(form);
     setupEquipmentSelectors(form, {
       typeSelectId: "resp-tipo-equipamento-select",
       typeInputName: "tipoEquipamento",
@@ -131,6 +158,21 @@
       onSubmit: function onSubmit(data) {
         generateReturnPdf(withReturnDefaults(data));
       }
+    });
+  }
+
+  function setupResponsibilityCompanySelect(form) {
+    const select = form.elements.empresaId;
+
+    if (!select) {
+      return;
+    }
+
+    RESPONSIBILITY_COMPANIES.forEach(function appendCompany(company) {
+      const option = document.createElement("option");
+      option.value = company.id;
+      option.textContent = company.label;
+      select.appendChild(option);
     });
   }
 
@@ -407,10 +449,10 @@
         data.cpf +
         ", matrícula nº " +
         data.matricula +
-        ", na qualidade de empregado da " +
-        PdfUtils.COMPANY_NAME +
+        ", na qualidade de empregado " +
+        data.empresaNome +
         ", sociedade empresária limitada, CNPJ nº " +
-        PdfUtils.COMPANY_CNPJ +
+        data.empresaCnpj +
         ' ("EMPREGADORA"), DECLARO o seguinte:'
     );
     PdfUtils.drawParagraph(
@@ -486,10 +528,14 @@
   }
 
   function withResponsibilityDefaults(data) {
+    const company = getResponsibilityCompany(data.empresaId);
+
     return {
       nome: PdfUtils.safeValue(data.nome),
       cpf: PdfUtils.safeValue(data.cpf),
       matricula: PdfUtils.safeValue(data.matricula),
+      empresaNome: company.termName,
+      empresaCnpj: company.cnpj,
       cidade: PdfUtils.safeValue(data.cidade, "Curitiba"),
       tipoEquipamento: PdfUtils.safeValue(data.tipoEquipamento, "NOTEBOOK"),
       marca: PdfUtils.safeValue(data.marca),
@@ -499,6 +545,12 @@
       acessorios: PdfUtils.safeValue(data.acessorios, "-"),
       patrimonio: PdfUtils.safeValue(data.patrimonio)
     };
+  }
+
+  function getResponsibilityCompany(companyId) {
+    return RESPONSIBILITY_COMPANIES.find(function findCompany(company) {
+      return company.id === companyId;
+    }) || RESPONSIBILITY_COMPANIES[2];
   }
 
   function withReturnDefaults(data) {
