@@ -4,10 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gerador de Termos | GRAFICA E EDITORA POSIGRAF LTDA</title>
+  <script>
+    (function () {
+      try {
+        var storageKey = "genterm-theme";
+        var savedTheme = localStorage.getItem(storageKey);
+        var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = savedTheme || (prefersDark ? "dark" : "light");
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="css/style.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="js/form-utils.js"></script>
   <script defer src="js/pdf-utils.js"></script>
+  <script defer src="js/preview-utils.js"></script>
+  <script defer src="js/theme.js"></script>
   <script defer src="js/app.js"></script>
 </head>
 <body>
@@ -25,6 +39,16 @@
       <nav class="quick-links" aria-label="Atalhos dos formulários">
         <a class="quick-link" href="#responsabilidade">Responsabilidade</a>
         <a class="quick-link" href="#devolucao">Devolução</a>
+        <button
+          class="quick-link theme-toggle"
+          id="theme-toggle"
+          type="button"
+          aria-pressed="false"
+          aria-label="Alternar tema"
+          title="Alternar tema"
+        >
+          <span class="theme-toggle-icon" id="theme-toggle-icon" aria-hidden="true">☀</span>
+        </button>
       </nav>
     </div>
   </header>
@@ -32,16 +56,18 @@
   <div class="site-shell">
     <main class="landing-main">
       <section class="workspace" aria-live="polite">
-        <article class="form-card tool-panel" data-panel="responsabilidade" hidden>
-          <div class="panel-header">
-            <div class="panel-copy">
-              <span class="eyebrow">Formulário</span>
-              <h2>Termo de Responsabilidade</h2>
-              <p>Disponibilização de equipamento ao colaborador com geração direta em PDF.</p>
-            </div>
-          </div>
+        <article class="tool-panel" data-panel="responsabilidade" hidden>
+          <div class="panel-layout">
+            <section class="form-card panel-card">
+              <div class="panel-header">
+                <div class="panel-copy">
+                  <span class="eyebrow">Formulário</span>
+                  <h2>Termo de Responsabilidade</h2>
+                  <p>Disponibilização de equipamento ao colaborador com geração direta em PDF.</p>
+                </div>
+              </div>
 
-          <form id="responsabilidade-form" novalidate>
+          <form class="panel-form" id="responsabilidade-form" novalidate>
             <section class="section-block" aria-labelledby="resp-colaborador-title">
               <div class="section-heading">
                 <h3 id="resp-colaborador-title">Dados do colaborador</h3>
@@ -231,22 +257,37 @@
             </section>
 
             <div class="form-actions">
-              <a class="btn btn-secondary" href="#inicio">Cancelar</a>
               <button class="btn btn-primary" type="submit">Gerar PDF</button>
             </div>
           </form>
+            </section>
+            <aside class="form-card preview-card preview-shell" aria-labelledby="resp-preview-title">
+              <div class="preview-meta">
+                <span class="eyebrow">Preview</span>
+                <h3 id="resp-preview-title">Prévia do documento</h3>
+                <p>Atualizada automaticamente conforme o preenchimento.</p>
+              </div>
+              <div class="preview-stage">
+                <div class="preview-scroll">
+                  <div class="document-preview" id="responsabilidade-preview"></div>
+                </div>
+              </div>
+            </aside>
+          </div>
         </article>
 
-        <article class="form-card tool-panel" data-panel="devolucao" hidden>
-          <div class="panel-header">
-            <div class="panel-copy">
-              <span class="eyebrow">Formulário</span>
-              <h2>Termo de Devolução</h2>
-              <p>Registro de devolução de equipamento ao Departamento de TI com geração em PDF.</p>
-            </div>
-          </div>
+        <article class="tool-panel" data-panel="devolucao" hidden>
+          <div class="panel-layout">
+            <section class="form-card panel-card">
+              <div class="panel-header">
+                <div class="panel-copy">
+                  <span class="eyebrow">Formulário</span>
+                  <h2>Termo de Devolução</h2>
+                  <p>Registro de devolução de equipamento ao Departamento de TI com geração em PDF.</p>
+                </div>
+              </div>
 
-          <form id="devolucao-form" novalidate>
+          <form class="panel-form" id="devolucao-form" novalidate>
             <section class="section-block" aria-labelledby="dev-ti-title">
               <div class="section-heading">
                 <h3 id="dev-ti-title">Responsável pela devolução (TI)</h3>
@@ -460,17 +501,27 @@
             </section>
 
             <div class="form-actions">
-              <a class="btn btn-secondary" href="#inicio">Cancelar</a>
               <button class="btn btn-primary" type="submit">Gerar PDF</button>
             </div>
           </form>
+            </section>
+            <aside class="form-card preview-card preview-shell" aria-labelledby="dev-preview-title">
+              <div class="preview-meta">
+                <span class="eyebrow">Preview</span>
+                <h3 id="dev-preview-title">Prévia do documento</h3>
+                <p>Atualizada automaticamente conforme o preenchimento.</p>
+              </div>
+              <div class="preview-stage">
+                <div class="preview-scroll">
+                  <div class="document-preview" id="devolucao-preview"></div>
+                </div>
+              </div>
+            </aside>
+          </div>
         </article>
       </section>
     </main>
 
-    <footer class="site-footer">
-      <p>GRAFICA E EDITORA POSIGRAF LTDA</p>
-    </footer>
   </div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 (function () {
   const FormUtils = window.TermosFormUtils;
   const PdfUtils = window.TermosPdfUtils;
+  const PreviewUtils = window.TermosPreviewUtils;
   const ROUTES = {
     "#responsabilidade": "responsabilidade",
     "#devolucao": "devolucao"
@@ -96,7 +97,7 @@
   });
 
   async function init() {
-    if (!FormUtils || !PdfUtils) {
+    if (!FormUtils || !PdfUtils || !PreviewUtils) {
       return;
     }
 
@@ -105,12 +106,12 @@
     setupRouteSync();
     setupResponsibilityForm();
     setupReturnForm();
-    syncRoute(false);
+    syncRoute();
   }
 
   function setupRouteSync() {
     window.addEventListener("hashchange", function onHashChange() {
-      syncRoute(true);
+      syncRoute();
     });
   }
 
@@ -127,6 +128,20 @@
       typeInputName: "tipoEquipamento",
       brandSelectId: "resp-marca-select",
       brandInputName: "marca"
+    });
+    setupDocumentPreview({
+      form: form,
+      previewId: "responsabilidade-preview",
+      getData: function getData() {
+        return withResponsibilityDefaults(getFormSnapshot(form));
+      },
+      render: function renderPreview(container, data) {
+        PreviewUtils.renderResponsibility(container, data, {
+          clauses: RESPONSIBILITY_CLAUSES,
+          manualUrl: PdfUtils.MANUAL_URL,
+          rows: buildEquipmentRows(data)
+        });
+      }
     });
     FormUtils.setupForm({
       form: form,
@@ -152,6 +167,18 @@
       brandInputName: "marca"
     });
     FormUtils.setDateInputToToday(form.elements.data);
+    setupDocumentPreview({
+      form: form,
+      previewId: "devolucao-preview",
+      getData: function getData() {
+        return withReturnDefaults(getFormSnapshot(form));
+      },
+      render: function renderPreview(container, data) {
+        PreviewUtils.renderReturn(container, data, {
+          rows: buildEquipmentRows(data)
+        });
+      }
+    });
     FormUtils.setupForm({
       form: form,
       busyText: "Gerando...",
@@ -174,6 +201,10 @@
       option.textContent = company.label;
       select.appendChild(option);
     });
+
+    if (!select.value) {
+      select.value = "posigraf";
+    }
   }
 
   function setupTechnicianSelect(form) {
@@ -261,6 +292,23 @@
     }
 
     return techniciansData.tecnicos_n2[Number(technicianId)] || null;
+  }
+
+  function setupDocumentPreview(config) {
+    const form = config.form;
+    const container = document.getElementById(config.previewId);
+
+    if (!form || !container) {
+      return;
+    }
+
+    const updatePreview = function updatePreview() {
+      config.render(container, config.getData());
+    };
+
+    form.addEventListener("input", updatePreview);
+    form.addEventListener("change", updatePreview);
+    updatePreview();
   }
 
   async function loadTechnicians() {
@@ -410,7 +458,18 @@
       .toLowerCase();
   }
 
-  function syncRoute(shouldScroll) {
+  function getFormSnapshot(form) {
+    const formData = new FormData(form);
+    const snapshot = {};
+
+    formData.forEach(function assignValue(value, key) {
+      snapshot[key] = FormUtils.sanitizeInputValue(value);
+    });
+
+    return snapshot;
+  }
+
+  function syncRoute() {
     const activePanel = ROUTES[window.location.hash] || null;
 
     document.querySelectorAll("[data-panel]").forEach(function togglePanel(panel) {
@@ -421,16 +480,6 @@
     document.querySelectorAll("[data-target]").forEach(function toggleCard(card) {
       card.classList.toggle("is-active", card.dataset.target === activePanel);
     });
-
-    if (!shouldScroll || !activePanel) {
-      return;
-    }
-
-    const panel = document.querySelector('[data-panel="' + activePanel + '"]');
-
-    if (panel) {
-      panel.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
   }
 
   function generateResponsibilityPdf(data) {
