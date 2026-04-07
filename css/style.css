@@ -507,6 +507,10 @@ textarea {
   margin: 0;
 }
 
+.doc-preview-signature-text.is-bold {
+  font-weight: 700;
+}
+
 .doc-preview-footer {
   display: flex;
   justify-content: space-between;

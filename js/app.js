@@ -558,7 +558,10 @@
     PdfUtils.drawParagraph(ctx, data.cidade + ", " + PdfUtils.formatLongDate(data.data) + ".", {
       after: 8
     });
-    PdfUtils.drawSignature(ctx, [data.responsavelNome, data.responsavelCargo]);
+    PdfUtils.drawSignature(ctx, [
+      { text: data.responsavelNome, bold: true },
+      data.responsavelCargo
+    ]);
     PdfUtils.drawFooters(doc, "Devolução de Equipamentos", "TERMO DE DEVOLUÇÃO");
 
     doc.save(PdfUtils.formatFileName("TERMO_DEVOLUCAO", data.colaboradorNome));

@@ -207,13 +207,15 @@
     ctx.doc.setLineWidth(0.25);
     ctx.doc.line(lineStart, lineY, lineEnd, lineY);
 
-    ctx.doc.setFont("helvetica", "normal");
     ctx.doc.setFontSize(10);
     applyColor(ctx.doc, "setTextColor", COLORS.black);
 
     lines.forEach(function eachLine(line, index) {
+      const signatureLine = normalizeSignatureLine(line);
+
+      ctx.doc.setFont("helvetica", signatureLine.bold ? "bold" : "normal");
       ctx.doc.text(
-        safeValue(line),
+        signatureLine.text,
         centerX,
         lineY + 6 + index * ctx.lineHeight,
         { align: "center" },
@@ -307,6 +309,20 @@
     }
 
     return typeof fallback === "string" ? fallback : "";
+  }
+
+  function normalizeSignatureLine(line) {
+    if (line && typeof line === "object") {
+      return {
+        text: safeValue(line.text),
+        bold: Boolean(line.bold),
+      };
+    }
+
+    return {
+      text: safeValue(line),
+      bold: false,
+    };
   }
 
   function splitIntoParagraphLines(doc, text, width) {

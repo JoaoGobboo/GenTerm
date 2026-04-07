@@ -90,7 +90,10 @@
             "doc-preview-location"
           ) +
           renderSignature([
-            safeValue(data.responsavelNome, "Responsável TI"),
+            {
+              text: safeValue(data.responsavelNome, "Responsável TI"),
+              bold: true
+            },
             safeValue(data.responsavelCargo, "Responsável Departamento TI")
           ]) +
         "</div>" +
@@ -134,7 +137,12 @@
       '<div class="doc-preview-signature">' +
         '<div class="doc-preview-signature-line"></div>' +
         lines.map(function mapLine(line) {
-          return '<p class="doc-preview-signature-text">' + escapeHtml(safeValue(line)) + "</p>";
+          const signatureLine = normalizeSignatureLine(line);
+          const className = signatureLine.bold
+            ? "doc-preview-signature-text is-bold"
+            : "doc-preview-signature-text";
+
+          return '<p class="' + className + '">' + escapeHtml(signatureLine.text) + "</p>";
         }).join("") +
       "</div>"
     );
@@ -166,6 +174,20 @@
 
     const normalized = String(value || "").trim();
     return normalized || String(fallback || "");
+  }
+
+  function normalizeSignatureLine(line) {
+    if (line && typeof line === "object") {
+      return {
+        text: safeValue(line.text),
+        bold: Boolean(line.bold)
+      };
+    }
+
+    return {
+      text: safeValue(line),
+      bold: false
+    };
   }
 
   function escapeHtml(value) {
