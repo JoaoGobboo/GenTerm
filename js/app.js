@@ -8,77 +8,22 @@
   };
   const FIXED_TI_ROLE = "Responsável Departamento TI";
   const TECHNICIANS_FILE = "assets/tecnicos.json";
+  const COMPANIES_FILE = "assets/empresas.json";
   const EQUIPMENT_OPTIONS_FILE = "assets/equipamentos.json";
-  const RESPONSIBILITY_COMPANIES = [
-    {
-      id: "aprende-brasil",
-      label: "Aprende Brasil",
-      termName: "Aprende Brasil",
-      cnpj: "75.104.422/0010-05"
-    },
-    {
-      id: "positivo-educacional",
-      label: "Positivo Educacional",
-      termName: "Positivo Educacional",
-      cnpj: "812.437.350.019-77"
-    },
-    {
-      id: "posigraf",
-      label: "Gráfica e Editora Posigraf",
-      termName: "GRAFICA E EDITORA POSIGRAF LTDA",
-      cnpj: "75.104.422/0010-05"
-    },
-    {
-      id: "instituto-positvo",
-      label: "Instituto Positvo",
-      termName: "Instituto Positvo",
-      cnpj: "11.820.490/0001-99"
-    }
-  ];
-  const FALLBACK_TECHNICIANS = {
-    tecnicos_n2: [
-      {
-        nome: "João Victor Gobbo dos Santos",
-        matricula: "105773",
-        cpf: "13169063960",
-        cidade: "Curitiba"
-      },
-      {
-        nome: "Albert de Oliveira Lopes",
-        matricula: "107413",
-        cpf: "04661328590",
-        cidade: "Curitiba"
-      },
-      {
-        nome: "Gustavo Henrique Schultz",
-        matricula: "108649",
-        cpf: "10319809978",
-        cidade: "Curitiba"
-      }
-    ]
+  const DEFAULT_RESPONSIBILITY_COMPANY_ID = "posigraf";
+  const EMPTY_COMPANY = {
+    id: "",
+    label: "",
+    termName: "",
+    cnpj: ""
   };
-  const FALLBACK_EQUIPMENT_OPTIONS = {
-    tipos: [
-      "Notebook",
-      "Desktop",
-      "Tablet",
-      "Smartphone",
-      "Projetor",
-      "Caixa de som",
-      "Monitor"
-    ],
-    marcas_por_tipo: {
-      Notebook: ["Lenovo", "Vaio", "Avell"],
-      Desktop: [],
-      Tablet: [],
-      Smartphone: ["Samsung", "Apple"],
-      Projetor: ["Epson"],
-      "Caixa de som": ["JBL"],
-      Monitor: ["AOC", "Philips", "Positivo"]
-    }
+  const EMPTY_EQUIPMENT_OPTIONS = {
+    tipos: [],
+    marcas_por_tipo: {}
   };
-  let techniciansData = FALLBACK_TECHNICIANS;
-  let equipmentOptionsData = FALLBACK_EQUIPMENT_OPTIONS;
+  let techniciansData = { tecnicos_n2: [] };
+  let responsibilityCompanies = [];
+  let equipmentOptionsData = EMPTY_EQUIPMENT_OPTIONS;
   const RESPONSIBILITY_CLAUSES = [
     "3. Os equipamentos e acessórios acima discriminados foram recebidos em perfeito estado de conservação, uso e funcionamento, razão pela qual me comprometo a conservá-los como se de minha propriedade fossem, responsabilizando-me pela guarda, segurança e integridade dos bens, bem como a obedecer às normas técnicas aplicáveis, contidas no manual do fabricante.",
     "4. Declaro que possuo instalações físicas adequadas à instalação e utilização dos equipamentos acima especificados, sem que isto acarrete qualquer tipo de custo ou despesa adicional além daquelas que já possuo.",
@@ -102,6 +47,7 @@
     }
 
     techniciansData = await loadTechnicians();
+    responsibilityCompanies = await loadResponsibilityCompanies();
     equipmentOptionsData = await loadEquipmentOptions();
     setupRouteSync();
     setupResponsibilityForm();
@@ -190,20 +136,32 @@
 
   function setupResponsibilityCompanySelect(form) {
     const select = form.elements.empresaId;
+    const currentValue = select && select.value;
 
     if (!select) {
       return;
     }
 
-    RESPONSIBILITY_COMPANIES.forEach(function appendCompany(company) {
+    select.innerHTML = "";
+
+    const firstOption = document.createElement("option");
+    firstOption.value = "";
+    firstOption.textContent = "Selecione a empresa";
+    select.appendChild(firstOption);
+
+    responsibilityCompanies.forEach(function appendCompany(company) {
       const option = document.createElement("option");
       option.value = company.id;
       option.textContent = company.label;
       select.appendChild(option);
     });
 
+    if (currentValue && responsibilityCompanies.some(function hasCompany(company) { return company.id === currentValue; })) {
+      select.value = currentValue;
+    }
+
     if (!select.value) {
-      select.value = "posigraf";
+      select.value = getResponsibilityCompany(DEFAULT_RESPONSIBILITY_COMPANY_ID).id;
     }
   }
 
@@ -240,6 +198,10 @@
 
     if (!typeField || !brandField || !typeSelect || !brandSelect) {
       return;
+    }
+
+    if (!typeField.value) {
+      typeField.value = getDefaultEquipmentType();
     }
 
     populateSelect(typeSelect, equipmentOptionsData.tipos, "Selecionar sugestão");
@@ -323,14 +285,38 @@
 
       const data = await response.json();
 
-      if (!data || !Array.isArray(data.tecnicos_n2) || data.tecnicos_n2.length === 0) {
+      if (!data || !Array.isArray(data.tecnicos_n2)) {
         throw new Error("Arquivo de técnicos inválido.");
       }
 
       return normalizeTechnicians(data);
     } catch (error) {
-      console.warn("Usando fallback local de técnicos.", error);
-      return normalizeTechnicians(FALLBACK_TECHNICIANS);
+      console.warn("Não foi possível carregar os técnicos em assets/tecnicos.json.", error);
+      return normalizeTechnicians({ tecnicos_n2: [] });
+    }
+  }
+
+  async function loadResponsibilityCompanies() {
+    try {
+      const response = await window.fetch(COMPANIES_FILE, {
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao carregar empresas.");
+      }
+
+      const data = await response.json();
+      const companies = Array.isArray(data && data.empresas) ? data.empresas : Array.isArray(data) ? data : null;
+
+      if (!companies) {
+        throw new Error("Arquivo de empresas inválido.");
+      }
+
+      return normalizeResponsibilityCompanies(companies);
+    } catch (error) {
+      console.warn("Não foi possível carregar as empresas em assets/empresas.json.", error);
+      return normalizeResponsibilityCompanies([]);
     }
   }
 
@@ -352,8 +338,8 @@
 
       return normalizeEquipmentOptions(data);
     } catch (error) {
-      console.warn("Usando fallback local de opções de equipamento.", error);
-      return normalizeEquipmentOptions(FALLBACK_EQUIPMENT_OPTIONS);
+      console.warn("Não foi possível carregar as opções de equipamento em assets/equipamentos.json.", error);
+      return normalizeEquipmentOptions(EMPTY_EQUIPMENT_OPTIONS);
     }
   }
 
@@ -368,6 +354,23 @@
         };
       })
     };
+  }
+
+  function normalizeResponsibilityCompanies(data) {
+    return data
+      .map(function mapCompany(company) {
+        const label = PdfUtils.safeValue(company.label);
+
+        return {
+          id: String(company.id || "").trim(),
+          label: label,
+          termName: PdfUtils.safeValue(company.termName, label),
+          cnpj: PdfUtils.safeValue(company.cnpj)
+        };
+      })
+      .filter(function hasId(company) {
+        return Boolean(company.id);
+      });
   }
 
   function normalizeEquipmentOptions(data) {
@@ -395,6 +398,10 @@
 
   function updateBrandSelect(typeValue, select) {
     populateSelect(select, getBrandsForType(typeValue), "Selecionar sugestão");
+  }
+
+  function getDefaultEquipmentType() {
+    return equipmentOptionsData.tipos[0] || "";
   }
 
   function getBrandsForType(typeValue) {
@@ -589,7 +596,7 @@
       empresaNome: company.termName,
       empresaCnpj: company.cnpj,
       cidade: PdfUtils.safeValue(data.cidade, "Curitiba"),
-      tipoEquipamento: PdfUtils.safeValue(data.tipoEquipamento, "NOTEBOOK"),
+      tipoEquipamento: PdfUtils.safeValue(data.tipoEquipamento, getDefaultEquipmentType()),
       marca: PdfUtils.safeValue(data.marca),
       modelo: PdfUtils.safeValue(data.modelo),
       serial: PdfUtils.safeValue(data.serial),
@@ -600,9 +607,13 @@
   }
 
   function getResponsibilityCompany(companyId) {
-    return RESPONSIBILITY_COMPANIES.find(function findCompany(company) {
-      return company.id === companyId;
-    }) || RESPONSIBILITY_COMPANIES[2];
+    const normalizedCompanyId = normalizeKey(companyId);
+
+    return responsibilityCompanies.find(function findCompany(company) {
+      return normalizeKey(company.id) === normalizedCompanyId;
+    }) || responsibilityCompanies.find(function findDefaultCompany(company) {
+      return company.id === DEFAULT_RESPONSIBILITY_COMPANY_ID;
+    }) || responsibilityCompanies[0] || EMPTY_COMPANY;
   }
 
   function withReturnDefaults(data) {
@@ -614,7 +625,7 @@
       colaboradorNome: PdfUtils.safeValue(data.colaboradorNome),
       colaboradorCpf: PdfUtils.safeValue(data.colaboradorCpf),
       colaboradorMatricula: PdfUtils.safeValue(data.colaboradorMatricula),
-      tipoEquipamento: PdfUtils.safeValue(data.tipoEquipamento, "Notebook"),
+      tipoEquipamento: PdfUtils.safeValue(data.tipoEquipamento, getDefaultEquipmentType()),
       marca: PdfUtils.safeValue(data.marca, "-"),
       modelo: PdfUtils.safeValue(data.modelo, "-"),
       serial: PdfUtils.safeValue(data.serial),

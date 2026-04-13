@@ -28,3 +28,5 @@ node_modules/
 
 # Project data
 assets/tecnicos.json
+assets/empresas.json
+assets/equipamentos.json
