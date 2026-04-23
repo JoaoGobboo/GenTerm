@@ -2,6 +2,7 @@
   const FormUtils = window.TermosFormUtils;
   const PdfUtils = window.TermosPdfUtils;
   const PreviewUtils = window.TermosPreviewUtils;
+  const DEFAULT_ROUTE_HASH = "#responsabilidade";
   const ROUTES = {
     "#responsabilidade": "responsabilidade",
     "#devolucao": "devolucao"
@@ -52,6 +53,7 @@
     setupRouteSync();
     setupResponsibilityForm();
     setupReturnForm();
+    ensureDefaultRoute();
     syncRoute();
   }
 
@@ -476,8 +478,21 @@
     return snapshot;
   }
 
+  function ensureDefaultRoute() {
+    if (window.location.hash === DEFAULT_ROUTE_HASH) {
+      return;
+    }
+
+    if (window.history && typeof window.history.replaceState === "function") {
+      window.history.replaceState(null, "", DEFAULT_ROUTE_HASH);
+      return;
+    }
+
+    window.location.hash = DEFAULT_ROUTE_HASH;
+  }
+
   function syncRoute() {
-    const activePanel = ROUTES[window.location.hash] || null;
+    const activePanel = ROUTES[window.location.hash] || ROUTES[DEFAULT_ROUTE_HASH];
 
     document.querySelectorAll("[data-panel]").forEach(function togglePanel(panel) {
       const isActive = panel.dataset.panel === activePanel;
