@@ -6,6 +6,7 @@ O projeto gera, no navegador e sem backend, os seguintes documentos em PDF:
 
 - Termo de Responsabilidade
 - Termo de Devolução de Equipamentos
+- Termos em lote a partir de CSV/XLSX
 
 ## Stack
 
@@ -13,6 +14,7 @@ O projeto gera, no navegador e sem backend, os seguintes documentos em PDF:
 - CSS3
 - JavaScript puro
 - [jsPDF](https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js) via CDN
+- SheetJS `xlsx.full.min.js` local para leitura de XLSX no navegador
 - Docker + Nginx para deploy
 
 ## Estrutura
@@ -27,8 +29,23 @@ O projeto gera, no navegador e sem backend, os seguintes documentos em PDF:
 │   └── style.css
 ├── js/
 │   ├── app.js
-│   ├── form-utils.js
-│   └── pdf-utils.js
+│   ├── controllers/
+│   │   ├── batch-controller.js
+│   │   └── form-controllers.js
+│   ├── data/
+│   │   ├── app-data.js
+│   │   └── spreadsheet-parser.js
+│   ├── models/
+│   │   └── term-model.js
+│   ├── ui/
+│   │   ├── layout.js
+│   │   └── theme.js
+│   ├── utils/
+│   │   ├── form-utils.js
+│   │   ├── pdf-utils.js
+│   │   └── preview-utils.js
+│   └── vendor/
+│       └── xlsx.full.min.js
 ├── nginx/
 │   └── default.conf.template
 ├── .dockerignore
@@ -60,6 +77,14 @@ Os dados de apoio ficam em JSON dentro de `assets/`:
 - `assets/equipamentos.json`: tipos e marcas sugeridos no formulário
 
 Os campos de equipamento continuam editáveis mesmo com sugestões pré-definidas.
+
+## Geração em lote
+
+O painel `Lote` aceita arquivos CSV, XLSX e XLS. O usuário escolhe o tipo do lote, baixa o modelo CSV correspondente, importa a planilha preenchida e gera um único PDF consolidado.
+
+Cada linha válida da planilha gera um termo. Linhas com erro são listadas na tela e não entram no PDF.
+
+O próprio painel exibe as relações de IDs aceitos para preencher `empresaId` e `tecnicoId` na planilha.
 
 ## Docker
 

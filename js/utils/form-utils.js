@@ -286,6 +286,8 @@
   window.TermosFormUtils = {
     formatCpf: formatCpf,
     getTodayIso: getTodayIso,
+    isValidCpf: isValidCpf,
+    isValidDateInput: isValidDateInput,
     sanitizeInputValue: sanitizeInputValue,
     setDateInputToToday: setDateInputToToday,
     setupForm: setupForm
