@@ -5,26 +5,48 @@
   let themeToggleButton = null;
   let themeToggleIcon = null;
   let mediaQuery = null;
+  let mediaQueryBound = false;
 
-  document.addEventListener("DOMContentLoaded", function onReady() {
-    themeToggleButton = document.getElementById("theme-toggle");
-    themeToggleIcon = document.getElementById("theme-toggle-icon");
+  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener("termos:html-ready", init);
 
-    if (!themeToggleButton) {
+  function init() {
+    const currentToggleButton = document.getElementById("theme-toggle");
+    const currentToggleIcon = document.getElementById("theme-toggle-icon");
+
+    if (!currentToggleButton) {
       return;
     }
 
-    mediaQuery = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+    if (themeToggleButton && themeToggleButton !== currentToggleButton) {
+      themeToggleButton.removeEventListener("click", handleThemeToggle);
+    }
+
+    if (themeToggleButton !== currentToggleButton) {
+      currentToggleButton.addEventListener("click", handleThemeToggle);
+    }
+
+    themeToggleButton = currentToggleButton;
+    themeToggleIcon = currentToggleIcon;
+
+    if (!mediaQuery) {
+      mediaQuery = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+    }
 
     syncThemeButton(getCurrentTheme());
-    themeToggleButton.addEventListener("click", handleThemeToggle);
 
-    if (mediaQuery && typeof mediaQuery.addEventListener === "function") {
-      mediaQuery.addEventListener("change", handleSystemThemeChange);
-    } else if (mediaQuery && typeof mediaQuery.addListener === "function") {
-      mediaQuery.addListener(handleSystemThemeChange);
+    if (mediaQueryBound || !mediaQuery) {
+      return;
     }
-  });
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleSystemThemeChange);
+      mediaQueryBound = true;
+    } else if (typeof mediaQuery.addListener === "function") {
+      mediaQuery.addListener(handleSystemThemeChange);
+      mediaQueryBound = true;
+    }
+  }
 
   function handleThemeToggle() {
     const nextTheme = getCurrentTheme() === DARK_THEME ? LIGHT_THEME : DARK_THEME;

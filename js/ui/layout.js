@@ -2,20 +2,38 @@
   const ROOT = document.documentElement;
   let header = null;
   let resizeObserver = null;
+  let eventsBound = false;
   let lastAppHeight = "";
   let lastHeaderHeight = "";
 
-  document.addEventListener("DOMContentLoaded", function onReady() {
-    header = document.querySelector(".site-header");
+  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener("termos:html-ready", init);
+
+  function init() {
+    const currentHeader = document.querySelector(".site-header");
+
+    if (currentHeader !== header) {
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+      }
+
+      header = currentHeader;
+      lastHeaderHeight = "";
+    }
+
     syncLayoutMetrics();
     bindEvents();
-  });
+  }
 
   function bindEvents() {
-    window.addEventListener("resize", syncLayoutMetrics, { passive: true });
-    window.addEventListener("orientationchange", syncLayoutMetrics, { passive: true });
+    if (!eventsBound) {
+      window.addEventListener("resize", syncLayoutMetrics, { passive: true });
+      window.addEventListener("orientationchange", syncLayoutMetrics, { passive: true });
+      eventsBound = true;
+    }
 
-    if (!header || typeof ResizeObserver === "undefined") {
+    if (!header || resizeObserver || typeof ResizeObserver === "undefined") {
       return;
     }
 

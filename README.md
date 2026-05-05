@@ -15,18 +15,42 @@ O projeto gera, no navegador e sem backend, os seguintes documentos em PDF:
 - JavaScript puro
 - [jsPDF](https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js) via CDN
 - SheetJS `xlsx.full.min.js` local para leitura de XLSX no navegador
-- Docker + Nginx para deploy
+- Docker com servidor estático Python para deploy
 
 ## Estrutura
 
 ```text
 .
 ├── assets/
+│   ├── empresas.json
 │   ├── equipamentos.json
 │   ├── tecnicos.json
 │   └── nova logo.png
 ├── css/
+│   ├── base/
+│   │   ├── reset.css
+│   │   └── tokens.css
+│   ├── components/
+│   │   ├── buttons.css
+│   │   ├── cards.css
+│   │   ├── forms.css
+│   │   ├── header.css
+│   │   └── preview.css
+│   ├── layout/
+│   │   ├── panel.css
+│   │   ├── shell.css
+│   │   └── workspace.css
+│   ├── pages/
+│   │   └── batch.css
+│   ├── responsive.css
 │   └── style.css
+├── html/
+│   ├── components/
+│   │   └── site-header.html
+│   └── pages/
+│       ├── devolucao.html
+│       ├── lote.html
+│       └── responsabilidade.html
 ├── js/
 │   ├── app.js
 │   ├── controllers/
@@ -37,7 +61,15 @@ O projeto gera, no navegador e sem backend, os seguintes documentos em PDF:
 │   │   └── spreadsheet-parser.js
 │   ├── models/
 │   │   └── term-model.js
+│   ├── templates/
+│   │   ├── components/
+│   │   │   └── site-header-template.js
+│   │   └── pages/
+│   │       ├── devolucao-template.js
+│   │       ├── lote-template.js
+│   │       └── responsabilidade-template.js
 │   ├── ui/
+│   │   ├── html-loader.js
 │   │   ├── layout.js
 │   │   └── theme.js
 │   ├── utils/
@@ -46,8 +78,6 @@ O projeto gera, no navegador e sem backend, os seguintes documentos em PDF:
 │   │   └── preview-utils.js
 │   └── vendor/
 │       └── xlsx.full.min.js
-├── nginx/
-│   └── default.conf.template
 ├── .dockerignore
 ├── Dockerfile
 └── index.html
@@ -55,9 +85,9 @@ O projeto gera, no navegador e sem backend, os seguintes documentos em PDF:
 
 ## Como usar localmente
 
-Como o projeto é estático, você pode abrir o arquivo [index.html](./index.html) diretamente no navegador.
+Você pode abrir o arquivo [index.html](./index.html) diretamente no navegador.
 
-Se preferir servir localmente por HTTP:
+Para validar o mesmo fluxo do deploy e carregar JSONs locais por `fetch`, sirva os arquivos por HTTP:
 
 ```bash
 python -m http.server 8000
@@ -74,6 +104,7 @@ http://localhost:8000
 Os dados de apoio ficam em JSON dentro de `assets/`:
 
 - `assets/tecnicos.json`: técnicos N2 usados no formulário de devolução
+- `assets/empresas.json`: empresas usadas no formulário e no lote de responsabilidade
 - `assets/equipamentos.json`: tipos e marcas sugeridos no formulário
 
 Os campos de equipamento continuam editáveis mesmo com sugestões pré-definidas.
@@ -115,7 +146,7 @@ Fluxo básico:
 1. Suba este projeto para um repositório Git.
 2. Crie um novo projeto no Railway apontando para o repositório.
 3. O Railway detectará o `Dockerfile` e fará o build automaticamente.
-4. A porta é configurada via variável `PORT`, já tratada no `nginx`.
+4. A porta é configurada via variável `PORT`, já tratada no comando do `Dockerfile`.
 
 Não é necessário backend, build step ou framework adicional.
 
@@ -123,4 +154,5 @@ Não é necessário backend, build step ou framework adicional.
 
 - O PDF é gerado inteiramente no navegador.
 - Não há persistência de dados.
-- O projeto foi mantido propositalmente simples, com um único HTML.
+- O projeto continua estático e sem build step; o `index.html` é apenas o shell e as telas ficam em `html/pages/`.
+- Os arquivos em `js/templates/` registram os mesmos fragmentos para permitir uso direto por `file://`.

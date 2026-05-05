@@ -7,6 +7,7 @@
   const FormControllers = window.TermosFormControllers;
   const SpreadsheetParser = window.TermosSpreadsheetParser;
   const BatchController = window.TermosBatchController;
+  const HtmlLoader = window.TermosHtmlLoader;
   const DEFAULT_ROUTE_HASH = "#responsabilidade";
   const ROUTES = {
     "#responsabilidade": "responsabilidade",
@@ -21,11 +22,17 @@
   });
 
   async function init() {
-    if (!FormUtils || !PdfUtils || !PreviewUtils || !Data || !TermModel || !FormControllers || !SpreadsheetParser || !BatchController) {
+    if (!FormUtils || !PdfUtils || !PreviewUtils || !Data || !TermModel || !FormControllers || !SpreadsheetParser || !BatchController || !HtmlLoader) {
       return;
     }
 
-    const dataContext = await Data.loadAppData();
+    const results = await Promise.all([
+      Data.loadAppData(),
+      HtmlLoader.loadIncludes()
+    ]);
+    const dataContext = results[0];
+
+    document.dispatchEvent(new CustomEvent("termos:html-ready"));
 
     setupRouteSync();
     FormControllers.setupResponsibilityForm({

@@ -1,0 +1,143 @@
+﻿.batch-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.batch-panel-card {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.batch-template-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 16px;
+}
+
+.batch-summary {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+  color: var(--muted-foreground);
+  padding: 12px 14px;
+  font-size: 0.9rem;
+}
+
+.batch-summary.is-ready {
+  border-color: rgba(22, 163, 74, 0.35);
+  background: rgba(22, 163, 74, 0.08);
+  color: var(--foreground);
+}
+
+.batch-summary.is-error {
+  border-color: rgba(220, 38, 38, 0.35);
+  background: rgba(220, 38, 38, 0.08);
+  color: var(--foreground);
+}
+
+.batch-errors {
+  margin-top: 14px;
+  overflow-x: auto;
+}
+
+.batch-id-memo {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--popover);
+  padding: 12px 14px;
+  overflow-x: auto;
+}
+
+.batch-id-memo p {
+  margin: 0 0 12px;
+  color: var(--muted-foreground);
+  font-size: 0.88rem;
+}
+
+.batch-id-memo p:last-child {
+  margin-bottom: 0;
+}
+
+.batch-id-list + p {
+  margin-top: 18px;
+}
+
+.batch-id-memo strong {
+  color: var(--foreground);
+}
+
+.batch-id-memo code {
+  color: var(--foreground);
+  font-size: 0.84em;
+}
+
+.batch-id-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.batch-id-list li {
+  display: grid;
+  grid-template-columns: minmax(34px, max-content) max-content minmax(0, 1fr);
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+}
+
+.batch-id-list strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.batch-id-memo table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.84rem;
+}
+
+.batch-id-memo th,
+.batch-id-memo td {
+  border: 1px solid var(--border);
+  padding: 9px 10px;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.batch-id-memo th {
+  background: var(--muted);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.batch-errors table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.84rem;
+}
+
+.batch-errors th,
+.batch-errors td {
+  border: 1px solid var(--border);
+  padding: 9px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.batch-errors th {
+  background: var(--muted);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.batch-errors td:first-child {
+  width: 90px;
+  color: var(--muted-foreground);
+}
+
