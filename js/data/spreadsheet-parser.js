@@ -185,6 +185,7 @@
   }
 
   window.TermosSpreadsheetParser = {
-    parseFile: parseFile
+    parseFile: parseFile,
+    parseCsvText: parseCsvText
   };
 })();

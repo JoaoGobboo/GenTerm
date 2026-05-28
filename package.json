@@ -1,0 +1,8 @@
+{
+  "name": "genterm",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/**/*.test.js",
+    "verify-templates": "node scripts/verify-templates.js"
+  }
+}

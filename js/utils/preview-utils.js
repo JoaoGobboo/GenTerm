@@ -1,5 +1,7 @@
 (function () {
   const PdfUtils = window.TermosPdfUtils;
+  const HtmlUtils = window.TermosHtmlUtils;
+  const Specs = window.TermosDocumentSpecs;
 
   function renderResponsibility(container, data, config) {
     if (!container) {
@@ -12,7 +14,7 @@
 
     container.innerHTML =
       '<div class="doc-preview-page">' +
-        renderHeader("TERMO DE RESPONSABILIDADE", "Disponibilização de Equipamentos") +
+        renderHeader(Specs.RESPONSIBILITY.title, Specs.RESPONSIBILITY.subtitle) +
         '<div class="doc-preview-body">' +
           renderParagraph(
             "Pelo presente Termo de Responsabilidade, eu " +
@@ -27,13 +29,9 @@
               renderInlineValue(data.empresaCnpj, "00.000.000/0000-00") +
               ' ("EMPREGADORA"), DECLARO o seguinte:'
           ) +
-          renderParagraph(
-            "1. Para o desempenho de minhas funções, recebi, em comodato, os equipamentos e acessórios abaixo relacionados, os quais se encontram em meu poder até esta data:"
-          ) +
+          renderParagraph(Specs.RESPONSIBILITY.staticParagraph1) +
           renderEquipmentTable(options.rows || []) +
-          renderParagraph(
-            "2. Estou ciente e de acordo com a política de uso dos Equipamentos, disponível no Manual do Colaborador, no seguinte endereço:"
-          ) +
+          renderParagraph(Specs.RESPONSIBILITY.staticParagraph2) +
           '<p class="doc-preview-link"><a href="' +
             escapeHtml(manualUrl) +
             '" target="_blank" rel="noreferrer">' +
@@ -42,13 +40,11 @@
           clauses.map(function mapClause(clause) {
             return renderParagraph(clause);
           }).join("") +
-          renderParagraph(
-            "Ciente e de acordo com as declarações e compromissos ora assumidos, data e assino este termo."
-          ) +
-          renderParagraph("Local, data da assinatura digital/eletrônica.") +
-          renderSignature(["(assinado eletronicamente)", "Empregado"]) +
+          renderParagraph(Specs.RESPONSIBILITY.closing) +
+          renderParagraph(Specs.RESPONSIBILITY.locationLine) +
+          renderSignature(Specs.RESPONSIBILITY.signatureLines) +
         "</div>" +
-        renderFooter("Disponibilização de Equipamentos", "TERMO DE RESPONSABILIDADE") +
+        renderFooter(Specs.RESPONSIBILITY.footerLeft, Specs.RESPONSIBILITY.footerRight) +
       "</div>";
   }
 
@@ -64,7 +60,7 @@
 
     container.innerHTML =
       '<div class="doc-preview-page">' +
-        renderHeader("TERMO DE DEVOLUÇÃO", "Devolução de Equipamentos.") +
+        renderHeader(Specs.RETURN.title, Specs.RETURN.subtitle) +
         '<div class="doc-preview-body">' +
           renderParagraph(
             "Eu, " +
@@ -97,7 +93,7 @@
             safeValue(data.responsavelCargo, "Responsável Departamento TI")
           ]) +
         "</div>" +
-        renderFooter("Devolução de Equipamentos", "TERMO DE DEVOLUÇÃO") +
+        renderFooter(Specs.RETURN.footerLeft, Specs.RETURN.footerRight) +
       "</div>";
   }
 
@@ -191,12 +187,7 @@
   }
 
   function escapeHtml(value) {
-    return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+    return HtmlUtils.escapeHtml(value);
   }
 
   window.TermosPreviewUtils = {

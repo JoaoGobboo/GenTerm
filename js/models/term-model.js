@@ -1,17 +1,9 @@
 (function () {
   const FormUtils = window.TermosFormUtils;
   const PdfUtils = window.TermosPdfUtils;
-  const FIXED_TI_ROLE = "Responsável Departamento TI";
-  const RESPONSIBILITY_CLAUSES = [
-    "3. Os equipamentos e acessórios acima discriminados foram recebidos em perfeito estado de conservação, uso e funcionamento, razão pela qual me comprometo a conservá-los como se de minha propriedade fossem, responsabilizando-me pela guarda, segurança e integridade dos bens, bem como a obedecer às normas técnicas aplicáveis, contidas no manual do fabricante.",
-    "4. Declaro que possuo instalações físicas adequadas à instalação e utilização dos equipamentos acima especificados, sem que isto acarrete qualquer tipo de custo ou despesa adicional além daquelas que já possuo.",
-    "5. Declaro estar ciente, ainda, que a utilização de softwares está condicionada à regular existência de licença de uso de propriedade, responsabilizando-me pelos softwares instalados nos equipamentos, bem como a promover a instalação e a desinstalação destes, mesmo que gratuitos ou de demonstração, somente por meio de representantes da área de TI da EMPREGADORA. Estou ciente de que eventual caracterização de atividade de pirataria acarretará na minha responsabilização criminal pelas ações praticadas.",
-    "6. Declaro estar ciente e concordar que toda e qualquer necessidade de suporte, atualização, formatação ou questão diversa que envolva a utilização do aparelho, devo acionar a área de TI da EMPREGADORA, abstendo-me de realizar qualquer intervenção nos equipamentos descritos no item 1 acima.",
-    "7. Findo o período de utilização do equipamento ou do contrato de trabalho, ou outro prazo de vigência estabelecido pela EMPREGADORA, obrigo-me a devolver os equipamentos e acessórios a esta, nas mesmas condições em que os recebi, ressalvados eventuais desgastes decorrentes do uso normal, sob pena de configuração de apropriação indébita com a consequente responsabilização civil e criminal.",
-    "8. Responsabilizo-me por eventual dano, perda, roubo, furto ou qualquer outra forma de extravio ou prejuízo causado por mim e/ou por terceiros aos equipamentos e acessórios descritos no item 1 acima, autorizando, desde já, o desconto em folha de pagamento, verbas salariais e/ou rescisórias, pela EMPREGADORA, do valor correspondente ao respectivo ressarcimento ou indenização.",
-    "9. Declaro, ainda, que os equipamentos e acessórios mencionados serão utilizados única e exclusivamente por minha pessoa, no exercício de minhas funções, bem como que manterei sigilo profissional sobre todo e qualquer conteúdo e informações nele contidos ou por eles acessados.",
-    "10. Declaro, por fim, que tenho ciência de que qualquer atitude em desacordo com o disposto neste termo poderá ser considerada, pela EMPREGADORA, como infração ao meu contrato de trabalho, ficando sujeito às medidas disciplinares cabíveis."
-  ];
+  const Specs = window.TermosDocumentSpecs;
+  const FIXED_TI_ROLE = Specs.FIXED_TI_ROLE;
+  const RESPONSIBILITY_CLAUSES = Specs.RESPONSIBILITY.clauses;
 
   function withResponsibilityDefaults(data, dataContext) {
     const company = dataContext.getResponsibilityCompany(data.empresaId);
@@ -55,25 +47,26 @@
   }
 
   function buildEquipmentRows(data) {
+    const labels = Specs.EQUIPMENT_ROW_LABELS;
     return [
-      ["TIPO DO EQUIPAMENTO", data.tipoEquipamento],
-      ["MARCA", data.marca || "-"],
-      ["MODELO", data.modelo || "-"],
-      ["SERIAL", data.serial],
-      ["CARACTERISTICAS DO EQUIPAMENTO", data.caracteristicas || "-"],
-      ["ACESSÓRIOS", data.acessorios || "-"],
-      ["CÓDIGO DE PATRIMÔNIO", data.patrimonio]
+      [labels[0], data.tipoEquipamento],
+      [labels[1], data.marca || "-"],
+      [labels[2], data.modelo || "-"],
+      [labels[3], data.serial],
+      [labels[4], data.caracteristicas || "-"],
+      [labels[5], data.acessorios || "-"],
+      [labels[6], data.patrimonio]
     ];
   }
 
   function createResponsibilityPdf(data) {
     const doc = PdfUtils.createPdfDocument({
       title: "Termo de Responsabilidade",
-      subject: "Disponibilização de Equipamentos"
+      subject: Specs.RESPONSIBILITY.subtitle
     });
 
     drawResponsibilityTerm(doc, data);
-    PdfUtils.drawFooters(doc, "Disponibilização de Equipamentos", "TERMO DE RESPONSABILIDADE");
+    PdfUtils.drawFooters(doc, Specs.RESPONSIBILITY.footerLeft, Specs.RESPONSIBILITY.footerRight);
 
     return doc;
   }
@@ -81,11 +74,11 @@
   function createReturnPdf(data) {
     const doc = PdfUtils.createPdfDocument({
       title: "Termo de Devolução",
-      subject: "Devolução de Equipamentos"
+      subject: Specs.RETURN.footerLeft
     });
 
     drawReturnTerm(doc, data);
-    PdfUtils.drawFooters(doc, "Devolução de Equipamentos", "TERMO DE DEVOLUÇÃO");
+    PdfUtils.drawFooters(doc, Specs.RETURN.footerLeft, Specs.RETURN.footerRight);
 
     return doc;
   }
@@ -93,7 +86,7 @@
   function createBatchResponsibilityPdf(rows) {
     const doc = PdfUtils.createPdfDocument({
       title: "Termos de Responsabilidade em Lote",
-      subject: "Disponibilização de Equipamentos"
+      subject: Specs.RESPONSIBILITY.subtitle
     });
 
     rows.forEach(function drawRow(data, index) {
@@ -104,7 +97,7 @@
       drawResponsibilityTerm(doc, data);
     });
 
-    PdfUtils.drawFooters(doc, "Disponibilização de Equipamentos", "TERMO DE RESPONSABILIDADE");
+    PdfUtils.drawFooters(doc, Specs.RESPONSIBILITY.footerLeft, Specs.RESPONSIBILITY.footerRight);
 
     return doc;
   }
@@ -112,7 +105,7 @@
   function createBatchReturnPdf(rows) {
     const doc = PdfUtils.createPdfDocument({
       title: "Termos de Devolução em Lote",
-      subject: "Devolução de Equipamentos"
+      subject: Specs.RETURN.footerLeft
     });
 
     rows.forEach(function drawRow(data, index) {
@@ -123,7 +116,7 @@
       drawReturnTerm(doc, data);
     });
 
-    PdfUtils.drawFooters(doc, "Devolução de Equipamentos", "TERMO DE DEVOLUÇÃO");
+    PdfUtils.drawFooters(doc, Specs.RETURN.footerLeft, Specs.RETURN.footerRight);
 
     return doc;
   }
@@ -131,7 +124,7 @@
   function drawResponsibilityTerm(doc, data) {
     const ctx = PdfUtils.createLayoutContext(doc);
 
-    PdfUtils.drawHeader(ctx, "TERMO  DE  RESPONSABILIDADE", "Disponibilização  de  Equipamentos");
+    PdfUtils.drawHeader(ctx, Specs.RESPONSIBILITY.pdfTitle, "Disponibilização  de  Equipamentos");
     PdfUtils.drawParagraph(
       ctx,
       "Pelo presente Termo de Responsabilidade, eu " +
@@ -146,33 +139,24 @@
         data.empresaCnpj +
         ' ("EMPREGADORA"), DECLARO o seguinte:'
     );
-    PdfUtils.drawParagraph(
-      ctx,
-      "1. Para o desempenho de minhas funções, recebi, em comodato, os equipamentos e acessórios abaixo relacionados, os quais se encontram em meu poder até esta data:"
-    );
+    PdfUtils.drawParagraph(ctx, Specs.RESPONSIBILITY.staticParagraph1);
     PdfUtils.drawEquipmentTable(ctx, buildEquipmentRows(data));
-    PdfUtils.drawParagraph(
-      ctx,
-      "2. Estou ciente e de acordo com a política de uso dos Equipamentos, disponível no Manual do Colaborador, no seguinte endereço:"
-    );
+    PdfUtils.drawParagraph(ctx, Specs.RESPONSIBILITY.staticParagraph2);
     PdfUtils.drawLinkLines(ctx, PdfUtils.MANUAL_URL);
 
     RESPONSIBILITY_CLAUSES.forEach(function eachClause(clause) {
       PdfUtils.drawParagraph(ctx, clause);
     });
 
-    PdfUtils.drawParagraph(
-      ctx,
-      "Ciente e de acordo com as declarações e compromissos ora assumidos, data e assino este termo."
-    );
-    PdfUtils.drawParagraph(ctx, "Local, data da assinatura digital/eletrônica.");
-    PdfUtils.drawSignature(ctx, ["(assinado eletronicamente)", "Empregado"]);
+    PdfUtils.drawParagraph(ctx, Specs.RESPONSIBILITY.closing);
+    PdfUtils.drawParagraph(ctx, Specs.RESPONSIBILITY.locationLine);
+    PdfUtils.drawSignature(ctx, Specs.RESPONSIBILITY.signatureLines);
   }
 
   function drawReturnTerm(doc, data) {
     const ctx = PdfUtils.createLayoutContext(doc);
 
-    PdfUtils.drawHeader(ctx, "TERMO DE DEVOLUÇÃO", "Devolução de Equipamentos.");
+    PdfUtils.drawHeader(ctx, Specs.RETURN.title, Specs.RETURN.subtitle);
     PdfUtils.drawParagraph(
       ctx,
       "Eu, " +
