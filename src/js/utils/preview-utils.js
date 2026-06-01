@@ -156,6 +156,7 @@
   function renderInlineValue(value, fallback) {
     const normalized = safeValue(value);
 
+    // '-' é tratado como ausente — exibe placeholder em vez do valor (convenção de campo vazio no PDF).
     if (!normalized || normalized === "-") {
       return '<span class="doc-preview-placeholder">' + escapeHtml(fallback || "-") + "</span>";
     }
@@ -164,6 +165,7 @@
   }
 
   function safeValue(value, fallback) {
+    // Delega ao PdfUtils para comportamento consistente; fallback local cobre carregamento fora de ordem.
     if (PdfUtils && typeof PdfUtils.safeValue === "function") {
       return PdfUtils.safeValue(value, fallback);
     }

@@ -1,7 +1,9 @@
 (function () {
   window.TermosDocumentSpecs = {
+    // Não alterar sem revisão jurídica — conteúdo legal do Termo de Devolução.
     FIXED_TI_ROLE: "Responsável Departamento TI",
 
+    // A ordem importa: term-model acessa por índice posicional, não por chave.
     EQUIPMENT_ROW_LABELS: [
       "TIPO DO EQUIPAMENTO",
       "MARCA",
@@ -20,6 +22,7 @@
       footerRight: "TERMO DE RESPONSABILIDADE",
       staticParagraph1: "1. Para o desempenho de minhas funções, recebi, em comodato, os equipamentos e acessórios abaixo relacionados, os quais se encontram em meu poder até esta data:",
       staticParagraph2: "2. Estou ciente e de acordo com a política de uso dos Equipamentos, disponível no Manual do Colaborador, no seguinte endereço:",
+      // Deve conter exatamente 8 itens (cláusulas 3–10) — não alterar sem revisão jurídica.
       clauses: [
         "3. Os equipamentos e acessórios acima discriminados foram recebidos em perfeito estado de conservação, uso e funcionamento, razão pela qual me comprometo a conservá-los como se de minha propriedade fossem, responsabilizando-me pela guarda, segurança e integridade dos bens, bem como a obedecer às normas técnicas aplicáveis, contidas no manual do fabricante.",
         "4. Declaro que possuo instalações físicas adequadas à instalação e utilização dos equipamentos acima especificados, sem que isto acarrete qualquer tipo de custo ou despesa adicional além daquelas que já possuo.",

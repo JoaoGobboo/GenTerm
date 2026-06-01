@@ -146,6 +146,7 @@
   function downloadTemplate(type) {
     const schema = BATCH_TYPES[type] || BATCH_TYPES.responsabilidade;
     const headers = schema.requiredHeaders.concat(schema.optionalHeaders);
+    // BOM UTF-8 no início garante que o Excel reconheça a codificação ao abrir.
     const blob = new Blob(["﻿" + headers.join(";") + "\r\n"], {
       type: "text/csv;charset=utf-8"
     });
@@ -217,6 +218,7 @@
   function resolveBatchTechnician(dataContext, technicianId) {
     const numericTechnicianIndex = getNumericIndex(technicianId);
 
+    // Técnico só resolve por índice numérico — busca por string (nome/matrícula) não é suportada.
     if (numericTechnicianIndex < 0) {
       return null;
     }
@@ -231,6 +233,7 @@
       return -1;
     }
 
+    // Converte de 1-based (planilha) para 0-based (array).
     return Number(normalizedValue) - 1;
   }
 

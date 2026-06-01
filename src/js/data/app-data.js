@@ -69,6 +69,7 @@
 
         if (matchingType) {
           const suggestions = equipmentOptionsData.marcas_por_tipo[matchingType] || [];
+          // Lista vazia para o tipo: retorna todas as marcas como fallback de sugestão.
           return suggestions.length > 0 ? suggestions : getAllBrands(equipmentOptionsData);
         }
 
@@ -186,6 +187,7 @@
     const brandsByType = {};
 
     types.forEach(function eachType(type) {
+      // Tenta a chave original e depois a normalizada — tolera acentos inconsistentes no JSON.
       const source = data.marcas_por_tipo[type] || data.marcas_por_tipo[normalizeKey(type)] || [];
       brandsByType[type] = source
         .map(function mapBrand(brand) {

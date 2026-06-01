@@ -19,6 +19,7 @@
   }
 
   function parseCsvText(text) {
+    // Remove BOM UTF-8 inserido pelo Excel em arquivos CSV.
     const normalizedText = String(text || "").replace(/^\uFEFF/, "");
     const firstLine = getFirstNonEmptyLine(normalizedText);
     const delimiter = detectDelimiter(firstLine);
@@ -131,6 +132,7 @@
     const semicolonCount = parseCsvRows(line, ";")[0].length;
     const commaCount = parseCsvRows(line, ",")[0].length;
 
+    // Em empate, prefere ';' — padrão de CSV europeu usado nos modelos exportados.
     return semicolonCount >= commaCount ? ";" : ",";
   }
 

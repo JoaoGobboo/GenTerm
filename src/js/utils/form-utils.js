@@ -189,6 +189,7 @@
     button.textContent = isBusy ? busyText : button.dataset.defaultLabel;
   }
 
+  // Cede o controle ao browser para renderizar o estado de carregamento antes do processamento síncrono do PDF.
   function waitForNextFrame() {
     return new Promise(function resolveOnFrame(resolve) {
       window.requestAnimationFrame(resolve);
@@ -205,6 +206,7 @@
 
   function getTodayIso() {
     const now = new Date();
+    // Subtrai o offset do fuso para obter a data local — new Date() em UTC pode retornar o dia anterior.
     const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
     return local.toISOString().slice(0, 10);
   }
@@ -264,6 +266,7 @@
       return accumulator + Number(digit) * (factor - index);
     }, 0);
     const remainder = (total * 10) % 11;
+    // Resto 10 mapeia para '0' pelo algoritmo de CPF; resto 11 é impossível nesta fórmula.
     return remainder === 10 ? "0" : String(remainder);
   }
 

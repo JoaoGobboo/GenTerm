@@ -225,6 +225,7 @@
     ctx.y = lineY + 6 + lines.length * ctx.lineHeight + 2;
   }
 
+  // Deve ser chamado após todas as páginas serem adicionadas — itera sobre o total final de páginas.
   function drawFooters(doc, leftText, rightText) {
     const pageCount = doc.getNumberOfPages();
     const pageWidth = doc.internal.pageSize.getWidth();
