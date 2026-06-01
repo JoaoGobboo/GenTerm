@@ -22,72 +22,84 @@ O projeto gera, no navegador e sem backend, os seguintes documentos em PDF:
 ```text
 .
 ├── assets/
-│   ├── empresas.json
-│   ├── equipamentos.json
-│   ├── tecnicos.json
+│   ├── empresas.json          # não versionado — gerado via env no deploy
+│   ├── equipamentos.json      # não versionado — gerado via env no deploy
+│   ├── tecnicos.json          # não versionado — gerado via env no deploy
 │   └── nova logo.png
-├── css/
-│   ├── base/
-│   │   ├── reset.css
-│   │   └── tokens.css
-│   ├── components/
-│   │   ├── buttons.css
-│   │   ├── cards.css
-│   │   ├── forms.css
-│   │   ├── header.css
-│   │   └── preview.css
-│   ├── layout/
-│   │   ├── panel.css
-│   │   ├── shell.css
-│   │   └── workspace.css
-│   ├── pages/
-│   │   └── batch.css
-│   ├── responsive.css
-│   └── style.css
-├── html/
-│   ├── components/
-│   │   └── site-header.html
-│   └── pages/
-│       ├── devolucao.html
-│       ├── lote.html
-│       └── responsabilidade.html
-├── js/
-│   ├── app.js
-│   ├── controllers/
-│   │   ├── batch-controller.js
-│   │   └── form-controllers.js
-│   ├── data/
-│   │   ├── app-data.js
-│   │   └── spreadsheet-parser.js
-│   ├── models/
-│   │   ├── batch-model.js
-│   │   ├── document-specs.js
-│   │   └── term-model.js
-│   ├── templates/
+├── specs/                     # contratos de comportamento (SDD)
+│   ├── README.md
+│   ├── batch-model.md
+│   ├── document-specs.md
+│   ├── form-utils.md
+│   ├── html-utils.md
+│   ├── pdf-utils.md
+│   ├── spreadsheet-parser.md
+│   └── term-model.md
+├── src/
+│   ├── css/
+│   │   ├── base/
+│   │   │   ├── reset.css
+│   │   │   └── tokens.css
 │   │   ├── components/
-│   │   │   └── site-header-template.js
+│   │   │   ├── buttons.css
+│   │   │   ├── cards.css
+│   │   │   ├── forms.css
+│   │   │   ├── header.css
+│   │   │   └── preview.css
+│   │   ├── layout/
+│   │   │   ├── panel.css
+│   │   │   ├── shell.css
+│   │   │   └── workspace.css
+│   │   ├── pages/
+│   │   │   └── batch.css
+│   │   ├── responsive.css
+│   │   └── style.css
+│   ├── html/
+│   │   ├── components/
+│   │   │   └── site-header.html
 │   │   └── pages/
-│   │       ├── devolucao-template.js
-│   │       ├── lote-template.js
-│   │       └── responsabilidade-template.js
-│   ├── ui/
-│   │   ├── html-loader.js
-│   │   ├── layout.js
-│   │   └── theme.js
-│   ├── utils/
-│   │   ├── form-utils.js
-│   │   ├── html-utils.js
-│   │   ├── pdf-utils.js
-│   │   └── preview-utils.js
-│   └── vendor/
-│       └── xlsx.full.min.js
-├── scripts/
-│   └── verify-templates.js
+│   │       ├── devolucao.html
+│   │       ├── lote.html
+│   │       └── responsabilidade.html
+│   ├── js/
+│   │   ├── app.js
+│   │   ├── controllers/
+│   │   │   ├── batch-controller.js
+│   │   │   └── form-controllers.js
+│   │   ├── data/
+│   │   │   ├── app-data.js
+│   │   │   └── spreadsheet-parser.js
+│   │   ├── models/
+│   │   │   ├── batch-model.js
+│   │   │   ├── document-specs.js
+│   │   │   └── term-model.js
+│   │   ├── templates/
+│   │   │   ├── components/
+│   │   │   │   └── site-header-template.js
+│   │   │   └── pages/
+│   │   │       ├── devolucao-template.js
+│   │   │       ├── lote-template.js
+│   │   │       └── responsabilidade-template.js
+│   │   ├── ui/
+│   │   │   ├── html-loader.js
+│   │   │   ├── layout.js
+│   │   │   └── theme.js
+│   │   ├── utils/
+│   │   │   ├── form-utils.js
+│   │   │   ├── html-utils.js
+│   │   │   ├── pdf-utils.js
+│   │   │   └── preview-utils.js
+│   │   └── vendor/
+│   │       └── xlsx.full.min.js
+│   └── scripts/
+│       └── verify-templates.js
 ├── tests/
 │   ├── helpers/
 │   │   └── harness.js
 │   ├── batch-model.test.js
 │   ├── form-utils.test.js
+│   ├── html-utils.test.js
+│   ├── pdf-utils.test.js
 │   ├── spreadsheet-parser.test.js
 │   └── term-model.test.js
 ├── .dockerignore
@@ -181,11 +193,22 @@ O projeto usa `node --test` sem dependências de runtime.
 npm test
 ```
 
-Para verificar se os templates JS (`js/templates/`) estão em sincronia com os arquivos HTML (`html/`):
+Para verificar se os templates JS (`src/js/templates/`) estão em sincronia com os arquivos HTML (`src/html/`):
 
 ```bash
 npm run verify-templates
 ```
+
+### Spec-Driven Development (SDD)
+
+Os contratos de comportamento ficam em `specs/` e precedem a implementação. O fluxo é:
+
+1. **Spec primeiro** — descreva o comportamento em `specs/<módulo>.md`
+2. **Teste segundo** — escreva o teste em `tests/` que falha
+3. **Implementação** — faça o teste passar sem alterar o spec
+4. **Revisão** — se a implementação revelar algo novo, atualize o spec e repita
+
+Módulos cobertos por spec: `form-utils`, `html-utils`, `pdf-utils`, `spreadsheet-parser`, `batch-model`, `term-model`, `document-specs`.
 
 ## Observações
 
