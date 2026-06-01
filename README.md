@@ -26,13 +26,18 @@ O projeto gera, no navegador e sem backend, os seguintes documentos em PDF:
 │   ├── equipamentos.json      # não versionado — gerado via env no deploy
 │   ├── tecnicos.json          # não versionado — gerado via env no deploy
 │   └── nova logo.png
-├── specs/                     # contratos de comportamento (SDD)
+├── .github/
+│   └── workflows/
+│       └── ci.yml             # testes no GitHub Actions antes do deploy
+├── specs/                     # contratos de comportamento (SDD + TDD)
 │   ├── README.md
+│   ├── app-data.md
 │   ├── batch-model.md
 │   ├── document-specs.md
 │   ├── form-utils.md
 │   ├── html-utils.md
 │   ├── pdf-utils.md
+│   ├── preview-utils.md
 │   ├── spreadsheet-parser.md
 │   └── term-model.md
 ├── src/
@@ -96,6 +101,7 @@ O projeto gera, no navegador e sem backend, os seguintes documentos em PDF:
 ├── tests/
 │   ├── helpers/
 │   │   └── harness.js
+│   ├── app-data.test.js
 │   ├── batch-model.test.js
 │   ├── form-utils.test.js
 │   ├── html-utils.test.js
@@ -185,6 +191,18 @@ Fluxo básico:
 
 Não é necessário backend, build step ou framework adicional.
 
+### CI/CD
+
+O deploy é protegido por CI: o Railway está configurado com **Wait for CI** e só promove uma nova versão após o workflow do GitHub Actions passar.
+
+```
+push para main
+  └─ GitHub Actions: npm test (94 testes)
+       └─ Railway: deploy  ← só ocorre se o CI passar
+```
+
+Pull requests também executam os testes, mas não disparam deploy.
+
 ## Testes
 
 O projeto usa `node --test` sem dependências de runtime.
@@ -213,7 +231,8 @@ O projeto combina **Spec-Driven Development** (contrato antes do código) com o 
 
 O SDD garante que o comportamento esperado está documentado antes de qualquer linha de produção. O TDD garante que cada incremento é guiado por um teste que falha primeiro.
 
-Módulos cobertos por spec: `form-utils`, `html-utils`, `pdf-utils`, `spreadsheet-parser`, `batch-model`, `term-model`, `document-specs`.
+Módulos com testes unitários: `form-utils`, `html-utils`, `pdf-utils`, `spreadsheet-parser`, `app-data`, `batch-model`, `term-model`, `document-specs`.
+Módulos DOM-only (spec sem teste unitário): `preview-utils`, controllers, ui, app.
 
 ## Observações
 
