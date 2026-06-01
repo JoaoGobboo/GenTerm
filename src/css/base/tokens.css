@@ -32,9 +32,9 @@
   --scrollbar-thumb: rgba(161, 161, 170, 0.72);
   --scrollbar-thumb-hover: rgba(113, 113, 122, 0.82);
   --scrollbar-track: rgba(244, 244, 245, 0.72);
-  --radius: 0.75rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.25rem;
+  --radius: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
   --shadow-sm: 0 1px 2px rgba(24, 24, 27, 0.04);
   --shadow-md: 0 1px 3px rgba(24, 24, 27, 0.08), 0 1px 2px rgba(24, 24, 27, 0.04);
   --max-width: 1480px;
