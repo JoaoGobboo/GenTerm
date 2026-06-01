@@ -199,14 +199,19 @@ Para verificar se os templates JS (`src/js/templates/`) estão em sincronia com 
 npm run verify-templates
 ```
 
-### Spec-Driven Development (SDD)
+### Metodologia: SDD + TDD
 
-Os contratos de comportamento ficam em `specs/` e precedem a implementação. O fluxo é:
+O projeto combina **Spec-Driven Development** (contrato antes do código) com o ciclo **Red-Green-Refactor** do TDD:
 
-1. **Spec primeiro** — descreva o comportamento em `specs/<módulo>.md`
-2. **Teste segundo** — escreva o teste em `tests/` que falha
-3. **Implementação** — faça o teste passar sem alterar o spec
-4. **Revisão** — se a implementação revelar algo novo, atualize o spec e repita
+| Fase | O que fazer |
+|------|-------------|
+| **Spec** | Descreva o contrato de comportamento em `specs/<módulo>.md` |
+| **Red** | Escreva o teste em `tests/` — deve falhar |
+| **Green** | Implemente o mínimo para o teste passar |
+| **Refactor** | Limpe o código sem quebrar os testes |
+| **Revisão** | Se a implementação revelar algo novo, atualize o spec e repita |
+
+O SDD garante que o comportamento esperado está documentado antes de qualquer linha de produção. O TDD garante que cada incremento é guiado por um teste que falha primeiro.
 
 Módulos cobertos por spec: `form-utils`, `html-utils`, `pdf-utils`, `spreadsheet-parser`, `batch-model`, `term-model`, `document-specs`.
 
