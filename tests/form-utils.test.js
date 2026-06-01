@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const { loadIife } = require('./helpers/harness.js');
 
 const w = {};
-loadIife('js/utils/form-utils.js', w);
+loadIife('src/js/utils/form-utils.js', w);
 const FormUtils = w.TermosFormUtils;
 
 // isValidCpf
@@ -61,6 +61,17 @@ test('sanitizeInputValue colapsa quebras de linha excessivas', () => {
 
 test('sanitizeInputValue normaliza CRLF para LF', () => {
   assert.equal(FormUtils.sanitizeInputValue('a\r\nb'), 'a\nb');
+});
+
+// getTodayIso
+test('getTodayIso retorna string no formato YYYY-MM-DD', () => {
+  assert.match(FormUtils.getTodayIso(), /^\d{4}-\d{2}-\d{2}$/);
+});
+
+test('getTodayIso retorna data compatível com a data atual do sistema', () => {
+  const result = FormUtils.getTodayIso();
+  const now = new Date();
+  assert.equal(result.slice(0, 4), String(now.getFullYear()));
 });
 
 // isValidDateInput

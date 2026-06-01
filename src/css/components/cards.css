@@ -1,0 +1,12 @@
+﻿.form-card {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+}
+
+.form-card {
+  padding: 22px;
+}
+

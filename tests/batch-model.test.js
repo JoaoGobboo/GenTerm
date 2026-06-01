@@ -6,7 +6,7 @@ const { loadIife } = require('./helpers/harness.js');
 const w = {};
 
 // FormUtils has no deps
-loadIife('js/utils/form-utils.js', w);
+loadIife('src/js/utils/form-utils.js', w);
 
 // TermosData stub — only normalizeKey is needed by BatchModel
 w.TermosData = {
@@ -25,7 +25,7 @@ w.TermosTermModel = {
   withReturnDefaults: function (data) { return data; }
 };
 
-loadIife('js/models/batch-model.js', w);
+loadIife('src/js/models/batch-model.js', w);
 const BatchModel = w.TermosBatchModel;
 
 // --- dataContext helpers ---

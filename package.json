@@ -3,6 +3,9 @@
   "private": true,
   "scripts": {
     "test": "node --test tests/**/*.test.js",
-    "verify-templates": "node scripts/verify-templates.js"
+    "verify-templates": "node src/scripts/verify-templates.js"
+  },
+  "devDependencies": {
+    "shadcn": "^4.10.0"
   }
 }

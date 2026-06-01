@@ -5,9 +5,7 @@ ENV PORT=8080
 WORKDIR /app
 
 COPY index.html ./
-COPY html ./html
-COPY css ./css
-COPY js ./js
+COPY src ./src
 COPY assets ./assets
 
 EXPOSE 8080

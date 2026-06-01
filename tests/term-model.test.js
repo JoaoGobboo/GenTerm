@@ -6,7 +6,7 @@ const { loadIife } = require('./helpers/harness.js');
 const w = {};
 
 // FormUtils stub — only getTodayIso is used by term-model
-loadIife('js/utils/form-utils.js', w);
+loadIife('src/js/utils/form-utils.js', w);
 
 // PdfUtils stub — only safeValue is used by term-model defaults
 w.TermosPdfUtils = {
@@ -44,7 +44,7 @@ w.TermosDocumentSpecs = {
   }
 };
 
-loadIife('js/models/term-model.js', w);
+loadIife('src/js/models/term-model.js', w);
 const TermModel = w.TermosTermModel;
 
 // dataContext helpers

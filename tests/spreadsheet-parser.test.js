@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const { loadIife } = require('./helpers/harness.js');
 
 const w = {};
-loadIife('js/data/spreadsheet-parser.js', w);
+loadIife('src/js/data/spreadsheet-parser.js', w);
 const Parser = w.TermosSpreadsheetParser;
 
 test('CSV com ponto-e-vírgula como delimitador', () => {
