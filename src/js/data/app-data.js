@@ -219,6 +219,7 @@
   window.TermosData = {
     DEFAULT_RESPONSIBILITY_COMPANY_ID: DEFAULT_RESPONSIBILITY_COMPANY_ID,
     loadAppData: loadAppData,
-    normalizeKey: normalizeKey
+    normalizeKey: normalizeKey,
+    createDataContext: createDataContext
   };
 })();
