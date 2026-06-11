@@ -128,7 +128,7 @@
 
       return TermModel.withResponsibilityDefaults(Object.assign({}, row, {
         empresaId: company.id,
-        cpf: FormUtils.formatCpf(row.cpf)
+        cpf: FormUtils.formatCpf(FormUtils.padCpf(row.cpf))
       }), dataContext);
     }
 
@@ -136,9 +136,9 @@
 
     return TermModel.withReturnDefaults(Object.assign({}, row, {
       responsavelNome: technician.nome,
-      responsavelCpf: FormUtils.formatCpf(technician.cpf),
+      responsavelCpf: FormUtils.formatCpf(FormUtils.padCpf(technician.cpf)),
       responsavelMatricula: technician.matricula,
-      colaboradorCpf: FormUtils.formatCpf(row.colaboradorCpf),
+      colaboradorCpf: FormUtils.formatCpf(FormUtils.padCpf(row.colaboradorCpf)),
       cidade: row.cidade || technician.cidade
     }), dataContext);
   }

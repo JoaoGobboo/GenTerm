@@ -247,8 +247,18 @@
     return digits.replace(/(\d{3})(\d{3})(\d{3})(\d+)/, "$1.$2.$3-$4");
   }
 
-  function isValidCpf(value) {
+  function padCpf(value) {
     const digits = onlyDigits(value);
+
+    if (digits.length === 0 || digits.length > 11) {
+      return digits;
+    }
+
+    return digits.padStart(11, "0");
+  }
+
+  function isValidCpf(value) {
+    const digits = padCpf(value);
 
     if (digits.length !== 11 || /^(\d)\1{10}$/.test(digits)) {
       return false;
@@ -291,6 +301,7 @@
     getTodayIso: getTodayIso,
     isValidCpf: isValidCpf,
     isValidDateInput: isValidDateInput,
+    padCpf: padCpf,
     sanitizeInputValue: sanitizeInputValue,
     setDateInputToToday: setDateInputToToday,
     setupForm: setupForm
