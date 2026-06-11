@@ -129,11 +129,16 @@
   }
 
   function detectDelimiter(line) {
-    const semicolonCount = parseCsvRows(line, ";")[0].length;
-    const commaCount = parseCsvRows(line, ",")[0].length;
+    // Ordem importa em caso de empate: ';' (padrão europeu dos modelos exportados),
+    // depois TAB (planilhas salvas como TSV) e por fim ','.
+    const candidates = [";", "\t", ","];
+    const counts = candidates.map(function buildCount(delimiter) {
+      return { delimiter: delimiter, count: parseCsvRows(line, delimiter)[0].length };
+    });
 
-    // Em empate, prefere ';' — padrão de CSV europeu usado nos modelos exportados.
-    return semicolonCount >= commaCount ? ";" : ",";
+    return counts.reduce(function pickBest(best, current) {
+      return current.count > best.count ? current : best;
+    }).delimiter;
   }
 
   function getFirstNonEmptyLine(text) {
